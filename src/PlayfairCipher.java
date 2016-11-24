@@ -53,13 +53,23 @@ public class PlayfairCipher {
 	public String encrypt(String message){
 		String encoding = "";
 		List<String> digraphs = getDigraphs(message);
-		encoding.length();
+		
 		for(String pair: digraphs){
-			encoding += encode(pair);
-			
+			encoding += encode(pair);	
 		}
 
 		return encoding;
+	}
+	
+	public String decrypt(String encoding){
+		String message = "";
+		List<String> digraphs = getDigraphs(encoding);
+		for(String pair: digraphs){
+			message += decode(pair);	
+		}
+		
+		//TODO split along words, get rid of padding x
+		return message;
 	}
 	
 	
@@ -151,12 +161,44 @@ public class PlayfairCipher {
 		return encoding;
 	}
 	
-	private static String concat(String[] a){
+	/**
+	 * Decodes digraph using initialized map 
+	 * @param pair digraph of letters
+	 * @return decoding of digraph
+	 */
+	private String decode(String pair){
+		String encoding = "";
+		char[] chars = pair.toCharArray();
+		int[] index0 = map.get(chars[0]);
+		int[] index1 = map.get(chars[1]);
+		//if letters appear on the same row, replace with letters imm. to right
+		if(index0[0] == index1[0]){
+			encoding += "" + table[index0[0]][(index0[1]-1)%5] + table[index1[0]][(index1[1]-1)%5];
+		}
+		//if letters appear on the same column, replace with letters imm. to below
+		else if(index0[1] == index1[1]){
+			encoding += "" + table[(index0[0]-1)%5][index0[1]] + table[(index1[0]-1)%5][index1[1]];
+		}
+		//replace them with the letters on the same row respectively but at the other pair of corners of the rectangle defined by the original pair.
+		else {
+			encoding += "" + table[index0[0]][index1[1]] + table[index1[0]][index0[1]];
+		}
+
+		return encoding;
+	}
+	
+	/**
+	 * Concatenates all elements in array into one string
+	 * @param array
+	 * @return string concatenation of values
+	 */
+	private static String concat(String[] array){
 		String out = "";
-		for(String s: a)
+		for(String s: array)
 			out += s;
 		return out;
 	}
+	
 	public static void main(String[] args){
 		String key = concat(args);
 		PlayfairCipher pf = new PlayfairCipher(key);
@@ -164,7 +206,9 @@ public class PlayfairCipher {
 		
 		while(true){
 			String input = in.nextLine();
-			System.out.println(pf.encrypt(input));
+			String encoding = pf.encrypt(input);
+			System.out.println(encoding);
+			System.out.println(pf.decrypt(encoding));
 		}
 	}
 }
