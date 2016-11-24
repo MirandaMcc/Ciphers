@@ -8,7 +8,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class PlayfairCipher {
-	private static final Set<Character> alphabet = new HashSet<Character>(Arrays.asList('a','b','c','d','e','f','g','h','j','k','l','m','n','o','p','q','r','s','t','u','v','w', 'x','y','z'));
+	private static final Set<Character> alphabet = new HashSet<Character>(Arrays.asList('a','b','c','d','e','f','g','h','i','k','l','m','n','o','p','q','r','s','t','u','v','w', 'x','y','z'));
 	private static final Dictionary dict = Dictionary.getInstance();
 	private static Map<Character,int[]> map;
 	private char[][] table;
@@ -42,8 +42,6 @@ public class PlayfairCipher {
 			table[n/5][n%5] = c;
 			n++;
 		}
-		System.out.println(table);
-		System.out.println(Arrays.toString(map.entrySet().toArray()));
 	}
 	
 	/**
@@ -53,7 +51,7 @@ public class PlayfairCipher {
 	 */
 	public String encrypt(String message){
 		String encoding = "";
-		List<String> digraphs = getDigraphs(message);
+		List<String> digraphs = getDigraphs(message,true);
 		
 		for(String pair: digraphs){
 			encoding += encode(pair);	
@@ -62,16 +60,39 @@ public class PlayfairCipher {
 		return encoding;
 	}
 	
+	/**
+	 * Decodes encrypted phrase that was encoded using the same cipher key
+	 * @param encoding 
+	 * @return decrypted message
+	 */
 	public String decrypt(String encoding){
 		String message = "";
-		List<String> digraphs = getDigraphs(encoding);
+		List<String> digraphs = getDigraphs(encoding, false);
 		for(String pair: digraphs){
 			message += decode(pair);	
 		}
+	
+		String messageMinX = "";
+		if(message.length() > 0){
+		//remove padding x's
+			char prev = 0;
+			char current = 0;
+			char next = message.charAt(0);
+			for(int i = 0; i < message.length()-1; i++){
+				prev = current;
+				current = next;
+				next = message.charAt(i+1);
+				if(!(prev == next && current == 'x')){
+					messageMinX += current;
+				}
+			}
+			char last = message.charAt(message.length()-1);
+			if (last != 'x')
+				messageMinX += message.charAt(message.length()-1);
+		}
 		
-		
-		//TODO split along words, get rid of padding x
-		return message;
+		//TODO split along words
+		return messageMinX;
 	}
 	
 	
@@ -93,17 +114,17 @@ public class PlayfairCipher {
 	 * @param message
 	 * @return list of digraphs
 	 */
-	private List<String> getDigraphs(String message){
+	private List<String> getDigraphs(String message, boolean encrypt){
 		char[] chars = message.toLowerCase().toCharArray();
 		List<String> digraphs = new ArrayList<String>();
 		char prev = 0;
 		String current = "";
 		for(char c: chars){
-			c = (c == 'i') ? 'j' : c;
+			c = (c == 'j') ? 'i' : c;
 			if(c >= 'a' && c <= 'z'){
 				if(prev == 0)
 					current += c;
-				else if(prev == c){
+				else if(encrypt && prev == c){
 					//pad X
 					if(current.length() < 2)
 					{	current += 'x';
@@ -124,12 +145,12 @@ public class PlayfairCipher {
 				prev = c;
 			}
 		}
-		if(current.length() == 1)
+		if(encrypt && current.length() == 1)
 		{
 			current += 'x';
 			digraphs.add(current);
 		}
-		if(current.length() == 2)
+		else if(current.length() == 2)
 		{
 			digraphs.add(current);
 		}
@@ -175,11 +196,15 @@ public class PlayfairCipher {
 		int[] index1 = map.get(chars[1]);
 		//if letters appear on the same row, replace with letters imm. to right
 		if(index0[0] == index1[0]){
-			encoding += "" + table[index0[0]][(index0[1]-1)%5] + table[index1[0]][(index1[1]-1)%5];
+			int col1 = ((index0[1]-1)%5)==-1 ? 4 : (index0[1]-1)%5;
+			int col2 = ((index1[1]-1)%5)==-1 ? 4 : (index1[1]-1)%5;
+			encoding += "" + table[index0[0]][col1] + table[index1[0]][col2];
 		}
 		//if letters appear on the same column, replace with letters imm. to below
 		else if(index0[1] == index1[1]){
-			encoding += "" + table[(index0[0]-1)%5][index0[1]] + table[(index1[0]-1)%5][index1[1]];
+			int row1 = ((index0[0]-1)%5)==-1 ? 4 : (index0[0]-1)%5;
+			int row2 = ((index1[0]-1)%5)==-1 ? 4 : (index1[0]-1)%5;
+			encoding += "" + table[row1][index0[1]] + table[row2][index1[1]];
 		}
 		//replace them with the letters on the same row respectively but at the other pair of corners of the rectangle defined by the original pair.
 		else {
