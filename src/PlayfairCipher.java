@@ -1,5 +1,6 @@
 import java.util.List;
 import java.util.Map;
+import java.util.Scanner;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -81,7 +82,6 @@ public class PlayfairCipher {
 	 * @return list of digraphs
 	 */
 	private List<String> getDigraphs(String message){
-		System.out.println("here");
 		char[] chars = message.toLowerCase().toCharArray();
 		List<String> digraphs = new ArrayList<String>();
 		char prev = 0;
@@ -147,12 +147,24 @@ public class PlayfairCipher {
 		else {
 			encoding += "" + table[index0[0]][index1[1]] + table[index1[0]][index0[1]];
 		}
-		System.out.println("encode: " + encoding);
+
 		return encoding;
 	}
 	
+	private static String concat(String[] a){
+		String out = "";
+		for(String s: a)
+			out += s;
+		return out;
+	}
 	public static void main(String[] args){
-		PlayfairCipher pf = new PlayfairCipher("Play fair example");
-		System.out.println(pf.encrypt("Hide the gold in the tree stump"));
+		String key = concat(args);
+		PlayfairCipher pf = new PlayfairCipher(key);
+		Scanner in = new Scanner(System.in);
+		
+		while(true){
+			String input = in.nextLine();
+			System.out.println(pf.encrypt(input));
+		}
 	}
 }
