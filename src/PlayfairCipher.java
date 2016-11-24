@@ -8,7 +8,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class PlayfairCipher {
-	private static Set<Character> alphabet = new HashSet<Character>(Arrays.asList('a','b','c','d','e','f','g','h','j','k','l','m','n','o','p','q','r','s','t','u','v','w', 'x','y','z'));
+	private static final Set<Character> alphabet = new HashSet<Character>(Arrays.asList('a','b','c','d','e','f','g','h','j','k','l','m','n','o','p','q','r','s','t','u','v','w', 'x','y','z'));
+	private static final Dictionary dict = Dictionary.getInstance();
 	private static Map<Character,int[]> map;
 	private char[][] table;
 	
@@ -67,6 +68,7 @@ public class PlayfairCipher {
 		for(String pair: digraphs){
 			message += decode(pair);	
 		}
+		
 		
 		//TODO split along words, get rid of padding x
 		return message;
