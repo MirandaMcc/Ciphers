@@ -7,9 +7,12 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * Implements Playfair Cipher with console interaction
+ * Can decrypt and encrypt messages
+ */
 public class PlayfairCipher {
 	private static final Set<Character> alphabet = new HashSet<Character>(Arrays.asList('a','b','c','d','e','f','g','h','i','k','l','m','n','o','p','q','r','s','t','u','v','w', 'x','y','z'));
-	private static final Dictionary dict = Dictionary.getInstance();
 	private static Map<Character,int[]> map;
 	private char[][] table;
 	
@@ -26,7 +29,7 @@ public class PlayfairCipher {
 		Set<Character> used = new HashSet<Character>();
 		int n = 0;
 		for(char c: chars){
-			c = (c == 'i') ? 'j' : c; //replace all i's with j's
+			c = (c == 'j') ? 'i' : c; //replace all i's with j's
 			if(c >= 'a' && c <= 'z' && used.add(c)){
 				int[] index = {n/5,n%5};
 				
@@ -172,7 +175,7 @@ public class PlayfairCipher {
 		if(index0[0] == index1[0]){
 			encoding += "" + table[index0[0]][(index0[1]+1)%5] + table[index1[0]][(index1[1]+1)%5];
 		}
-		//if letters appear on the same column, replace with letters imm. to below
+		//if letters appear on the same column, replace with letters imm. below
 		else if(index0[1] == index1[1]){
 			encoding += "" + table[(index0[0]+1)%5][index0[1]] + table[(index1[0]+1)%5][index1[1]];
 		}
@@ -194,13 +197,13 @@ public class PlayfairCipher {
 		char[] chars = pair.toCharArray();
 		int[] index0 = map.get(chars[0]);
 		int[] index1 = map.get(chars[1]);
-		//if letters appear on the same row, replace with letters imm. to right
+		//if letters appear on the same row, replace with letters imm. to left
 		if(index0[0] == index1[0]){
 			int col1 = ((index0[1]-1)%5)==-1 ? 4 : (index0[1]-1)%5;
 			int col2 = ((index1[1]-1)%5)==-1 ? 4 : (index1[1]-1)%5;
 			encoding += "" + table[index0[0]][col1] + table[index1[0]][col2];
 		}
-		//if letters appear on the same column, replace with letters imm. to below
+		//if letters appear on the same column, replace with letters imm. above
 		else if(index0[1] == index1[1]){
 			int row1 = ((index0[0]-1)%5)==-1 ? 4 : (index0[0]-1)%5;
 			int row2 = ((index1[0]-1)%5)==-1 ? 4 : (index1[0]-1)%5;
@@ -214,28 +217,18 @@ public class PlayfairCipher {
 		return encoding;
 	}
 	
-	/**
-	 * Concatenates all elements in array into one string
-	 * @param array
-	 * @return string concatenation of values
-	 */
-	private static String concat(String[] array){
-		String out = "";
-		for(String s: array)
-			out += s;
-		return out;
-	}
-	
 	public static void main(String[] args){
-		String key = concat(args);
-		PlayfairCipher pf = new PlayfairCipher(key);
+		System.out.print("Please choose a key for the cipher: ");
 		Scanner in = new Scanner(System.in);
-		
+		String key = in.nextLine();
+		PlayfairCipher pf = new PlayfairCipher(key);
+		WordSeparator sep = WordSeparator.getInstance();
 		while(true){
+			System.out.print("Please enter new message: ");
 			String input = in.nextLine();
 			String encoding = pf.encrypt(input);
 			System.out.println(encoding);
-			System.out.println(pf.decrypt(encoding));
+			System.out.println(sep.determineWords(pf.decrypt(encoding)));
 		}
 	}
 }
