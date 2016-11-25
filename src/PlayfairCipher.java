@@ -222,7 +222,7 @@ public class PlayfairCipher {
 		Scanner in = new Scanner(System.in);
 		String key = in.nextLine();
 		PlayfairCipher pf = new PlayfairCipher(key);
-		WordSeparator sep = WordSeparator.getInstance();
+		
 		while(true){
 			System.out.print("Please enter new message: ");
 			String input = in.nextLine();
