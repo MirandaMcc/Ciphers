@@ -228,7 +228,7 @@ public class PlayfairCipher {
 			String input = in.nextLine();
 			String encoding = pf.encrypt(input);
 			System.out.println(encoding);
-			System.out.println(sep.determineWords(pf.decrypt(encoding)));
+			System.out.println(pf.decrypt(encoding));
 		}
 	}
 }
