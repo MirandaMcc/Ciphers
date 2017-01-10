@@ -7,7 +7,7 @@ import java.util.Scanner;
 import java.util.Set;
 
 /**
- * TODO
+ * Implementation of OneTimePad Cipher that is resilient against frequency analysis attacks
  */
 public class OneTimePad {
 	private static final List<Character> alphabet = new ArrayList<Character>(Arrays.asList('a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w', 'x','y','z'));
@@ -18,17 +18,19 @@ public class OneTimePad {
 	}
 	
 	private Character shift(char c, int i){
-		/*int m = alphabet.indexOf(c);
-		int k = alphabet.indexOf(key.charAt(i%key.length()));
-		return alphabet.get((m+k)%alphabet.size());*/
+		int shift = (int) (Math.random()*26);
+		this.key.add(shift); //shift for character at index i in msg stored at index i in key
+		
+		int m = alphabet.indexOf(c);
+		return alphabet.get((m+shift)%alphabet.size());
 	}
 	
 	private Character deshift(char c,int i){
-		/*int e = alphabet.indexOf(c);
-		int k = alphabet.indexOf(key.charAt(i%key.length()));
-		int shift = e-k;
-		shift = (shift >= 0) ? shift : alphabet.size() + shift ;
-		return alphabet.get(shift%alphabet.size());*/
+		int e = alphabet.indexOf(c);
+		int shift = key.get(i);
+		int index = e-shift;
+		index = (index >= 0) ? index : alphabet.size() + index ;
+		return alphabet.get(index%alphabet.size());
 	}
 	
 	public String encode(String message){
@@ -55,12 +57,10 @@ public class OneTimePad {
 	}
 	
 	public static void main(String[] args){
-		System.out.print("Please choose a key for the cipher: ");
 		Scanner in = new Scanner(System.in);
-		String key = in.next();
-		OneTimePad cipher = new OneTimePad();
 		
 		while(true){
+			OneTimePad cipher = new OneTimePad();
 			System.out.print("Please enter new message: ");
 			String input = in.nextLine();
 			String encoding = cipher.encode(input);
