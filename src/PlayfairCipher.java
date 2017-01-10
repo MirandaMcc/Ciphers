@@ -22,7 +22,15 @@ public class PlayfairCipher {
 	 */
 	public PlayfairCipher(String key){
 		char[] chars = key.toLowerCase().toCharArray();
-		
+		fill(table,chars);
+	}
+	
+	/**
+	 * Fills in table with the letters in the key given and pads the rest of the array with the alphabet in order ignoring duplicates
+	 * @param table 5x5 char array to be filled in with key
+	 * @param chars char array of keyword characters
+	 */
+	public static void fill(char[][] table, char[] chars){
 		//fill in map and table
 		table = new char[5][5];
 		map = new HashMap<Character,int[]>();
@@ -106,7 +114,7 @@ public class PlayfairCipher {
 	 * @param s2
 	 * @return s3 = s1 - s2
 	 */
-	private <T> Set<T> setDiff(Set<T> s1, Set<T> s2){
+	public static <T> Set<T> setDiff(Set<T> s1, Set<T> s2){
 		Set<T> s3 = new HashSet<T>(s1);
 		s3.removeAll(s2);
 		return s3;
@@ -117,7 +125,7 @@ public class PlayfairCipher {
 	 * @param message
 	 * @return list of digraphs
 	 */
-	private List<String> getDigraphs(String message, boolean encrypt){
+	public static List<String> getDigraphs(String message, boolean encrypt){
 		char[] chars = message.toLowerCase().toCharArray();
 		List<String> digraphs = new ArrayList<String>();
 		char prev = 0;
