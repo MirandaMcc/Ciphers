@@ -21,8 +21,8 @@ public class PlayfairCipher {
 	 * @param key
 	 */
 	public PlayfairCipher(String key){
-		char[] chars = key.toLowerCase().toCharArray();
-		fill(table,chars);
+		
+		fill(table,key);
 	}
 	
 	/**
@@ -30,7 +30,9 @@ public class PlayfairCipher {
 	 * @param table 5x5 char array to be filled in with key
 	 * @param chars char array of keyword characters
 	 */
-	public static void fill(char[][] table, char[] chars){
+	private void fill(char[][] table, String key){
+		char[] chars = key.toLowerCase().toCharArray();
+		
 		//fill in map and table
 		table = new char[5][5];
 		map = new HashMap<Character,int[]>();
