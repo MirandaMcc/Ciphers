@@ -2,4 +2,4 @@
 Implementations of cryptographic cipher algorithms
 
 Includes:
-Playfair Cipher
+Playfair, Caesar, Four Sqaure, One Time Pad, Vigenere, and Transposition Ciphers
